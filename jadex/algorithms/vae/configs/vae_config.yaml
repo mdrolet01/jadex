@@ -1,0 +1,19 @@
+defaults:
+  - _self_
+  - model: daps
+  - dataset: cifar
+  - nn: ${dataset}_networks
+  - model_dataset: ${model}_${dataset}
+  - job: null
+  - cluster: local
+  - optional wandb: wandb_defaults
+  - override hydra/hydra_logging: disabled
+  - override hydra/job_logging: disabled
+
+hydra:
+  output_subdir: null
+  run:
+    dir: .
+
+wandb:
+  mode: online

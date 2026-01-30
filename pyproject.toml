@@ -1,0 +1,32 @@
+[project]
+name = "jadex"
+version = "1.0.0"
+authors = [{name="Michael Drolet", email="michael.drolet@tu-darmstadt.de"}]
+
+description = "JADEX: A library for statistical machine learning, in JAX"
+license = {text = "MIT"}
+
+dependencies = [
+    "jax[cuda12]",
+    "jaxlib",
+    "flax",
+    "optax",
+    "numpy",
+    "pillow",
+    "wandb",
+    "einops",
+    "h5py",
+    "tables",
+    "matplotlib",
+    "tqdm",
+    "hydra-core",
+    "submitit",
+]
+
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+cpu = [
+    "jax[cpu]",
+    "jaxlib",
+]

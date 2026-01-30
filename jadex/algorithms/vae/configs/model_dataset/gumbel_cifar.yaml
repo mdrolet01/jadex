@@ -1,0 +1,54 @@
+# @package _global_
+model:
+  block_size: 64
+  vocab_size: 512
+  embed_dim: 128
+
+schedulers:
+  # beta 0.01
+  beta:
+    type: auto_exp_decay
+    total_nsteps: ${job.total_nsteps}
+    init_value: 6.0
+    end_value: 0.01
+    end_pct: 1.0
+  temperature:
+    type: constant_schedule
+    value: 1.0
+  
+  # beta 1.0
+  # beta:
+  #   type: auto_exp_decay
+  #   total_nsteps: ${job.total_nsteps}
+  #   init_value: 6.0
+  #   end_value: 1.0
+  #   end_pct: 1.0
+  # temperature:
+  #   type: auto_exp_decay
+  #   total_nsteps: ${job.total_nsteps}
+  #   init_value: 1.0
+  #   end_value: 0.75
+  #   end_pct: 0.75
+
+
+# beta 0.01
+optimizers:
+  vae_opt:
+    lr_scheduler:
+      type: cosine_decay_schedule
+      init_value: 1e-4
+      decay_steps: ${job.total_nsteps}
+      alpha: 0.1
+
+# beta 1.0
+# optimizers:
+#   vae_opt:
+#     lr_scheduler:
+#       init_value: 3e-4
+#       type: cosine_decay_schedule
+#       decay_steps: ${job.total_nsteps}
+#       alpha: 0.1
+
+job:
+  start_checkpoint: null
+  start_checkpoint_idx: -1

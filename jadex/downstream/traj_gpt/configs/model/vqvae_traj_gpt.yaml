@@ -1,0 +1,5 @@
+# @package _global_
+model:
+  name: VQVAETrajGptModel
+  vae_checkpoint_name: ???
+  vae_checkpoint_idx: -1

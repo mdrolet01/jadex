@@ -1,0 +1,115 @@
+# @package _global_
+model:
+  num_bits: 640
+
+dataset:
+  id: lafan
+  name: LAFANDataset
+  in_memory: true # only supports in_memory!
+  length: ${trajectory.input_len}
+  channels: ???
+  scaler_mode: data
+  scaler_type: standardize # standardize or normalize
+  dist_name: ???
+  shape:
+    - ${dataset.length}
+    - ${dataset.channels}
+  param_shape: ${dataset.shape}
+  num_train: 1000
+
+trajectory:
+  input_len: 32 # ${model.block_size}
+  full_traj_len: 256
+  begin_pad: 0
+  end_pad: ${trajectory.input_len}
+
+spaces:
+  input:
+    name: RelSites
+    params:
+      use_positions: true
+      use_rotations: true
+      use_velocities: false      
+
+dists:
+  x_dist:
+    name: DiagonalGaussianConstantVariance
+    x_var_prior: 0.25
+
+job:
+  checkpoint_overrides: []
+  start_checkpoint_idx: -1
+  total_nsteps: 250000
+  print_frequency_nsteps: 500
+  wandb_inexpensive_frequency_nsteps: 500
+  wandb_expensive_frequency_nsteps: 5000
+  validation_frequency_nsteps: 5000
+  checkpoint_frequency_nsteps: 50000
+
+train:
+  seed: 0
+  batch_size: 256
+  num_workers: 1
+
+test:
+  num_val_samples: 10000
+  batch_size: 200
+
+env:
+  env_name: UnitreeH1
+  timestep: 0.001
+  n_substeps: 10
+  viewer_params:
+    headless: true
+
+val_dataset:
+ - dance2_subject2
+ - fight1_subject2
+ - run2_subject1
+ - walk2_subject4
+
+task_factory:
+  name: ImitationFactory
+  params:
+    lafan1_dataset_conf:
+      dataset_name:
+        - dance1_subject1
+        - dance1_subject2
+        - dance1_subject3
+        - dance2_subject1
+        # - dance2_subject2
+        - dance2_subject3
+        - dance2_subject4
+        - dance2_subject5
+        - fallAndGetUp1_subject1
+        - fallAndGetUp1_subject4
+        - fallAndGetUp1_subject5
+        - fallAndGetUp2_subject2
+        - fallAndGetUp2_subject3
+        - fallAndGetUp3_subject1
+        # - fight1_subject2
+        - fight1_subject3
+        - fight1_subject5
+        - fightAndSports1_subject1
+        - fightAndSports1_subject4
+        - jumps1_subject1
+        - jumps1_subject2
+        - jumps1_subject5
+        - run1_subject2
+        - run1_subject5
+        # - run2_subject1
+        - run2_subject4
+        - sprint1_subject2
+        - sprint1_subject4
+        - walk1_subject1
+        - walk1_subject2
+        - walk1_subject5
+        - walk2_subject1
+        - walk2_subject3
+        # - walk2_subject4
+        - walk3_subject1
+        - walk3_subject2
+        - walk3_subject3
+        - walk3_subject4
+        - walk3_subject5
+        - walk4_subject1

@@ -1,0 +1,28 @@
+# @package _global_
+model:
+  block_size: 8
+  vocab_size: 256
+  embed_dim: 64
+  num_value_samples: 8
+  ess_target: 0.5
+
+schedulers:
+  # beta 0.01
+  beta:
+    type: auto_exp_decay
+    total_nsteps: ${job.total_nsteps}
+    init_value: 0.5
+    end_value: 0.01
+    end_pct: 1.0
+  
+  # beta 1.0
+  # beta:
+  #   type: auto_exp_decay
+  #   total_nsteps: ${job.total_nsteps}
+  #   init_value: 1.0
+  #   end_value: 1.0
+  #   end_pct: 1.0
+
+job:
+  start_checkpoint: null
+  start_checkpoint_idx: -1

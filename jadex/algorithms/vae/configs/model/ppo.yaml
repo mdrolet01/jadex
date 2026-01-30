@@ -1,0 +1,78 @@
+# @package _global_
+model:
+  id: ppo
+  name: PPOModel
+  block_size: ???
+  vocab_size: ???
+  num_bits: ???
+  embed_dim: ???
+  clip_eps: 0.2
+  normalize_advantage: false
+  old_kl:
+    target: ???
+    min_coeff: ???
+    max_coeff: ???
+    scale: ???
+    gain: ???
+
+schedulers:
+  beta:
+    type: constant_schedule
+    value: 0.01
+
+dists:
+  x_dist:
+    name: ${dataset.dist_name}
+    shape: ${dataset.shape}
+    param_shape: ${dataset.param_shape}
+  latent_dist:
+    name: Categorical
+    shape:
+      - ${model.block_size}
+    param_shape:
+      - ${model.block_size}
+      - ${model.vocab_size}
+
+networks:
+  recognition_model:
+    nn: ${nn.cross_attn_recognition_model}
+    input_dists:
+      x: x_dist
+      latent: latent_dist
+    output_dists:
+      latent: latent_dist
+
+  generative_model:
+    nn: ${nn.generative_model}
+    input_dists:
+      latent: latent_dist
+    output_dists:
+      x: x_dist
+
+  baseline_model:
+    nn: ${nn.baseline_model}
+    input_dists:
+      x: x_dist
+    output_dists:
+      baseline: null
+
+optimizers:
+  vae_opt:
+    params: [recognition_model, generative_model]
+    type: adamw
+    lr_scheduler:
+      type: constant_schedule
+      value: 1e-4
+    other:
+      grad_clip: 1.0
+      apply_if_finite: 100  
+
+  baseline_opt:
+    params: [baseline_model]
+    type: adamw
+    lr_scheduler:
+      type: constant_schedule
+      value: 1e-4
+    other:
+      global_grad_clip: 1.0
+      apply_if_finite: 100

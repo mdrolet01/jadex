@@ -1,0 +1,101 @@
+defaults:
+  - _self_
+  - model: daps_traj_gpt
+  - job: null
+  - cluster: local
+  - override hydra/hydra_logging: disabled
+  - override hydra/job_logging: disabled
+
+hydra:
+  output_subdir: null
+  run:
+    dir: .
+
+vae_cfg: ?? # loaded from vae checkpoint
+
+dists:
+  gpt_latent_dist: ??? # set manually 
+  
+  text_dist:
+    name: Categorical
+    shape:
+      - ${spaces.text.params.max_text_len}
+    param_shape:
+      - ${spaces.text.params.max_text_len}
+      - 100
+
+  goal_dist:
+    name: DiagonalGaussianConstantVariance
+    shape: ??? # set manually
+
+spaces:
+  text:
+    name: TextDescription
+    params:
+      full_traj_len: ${trajectory.full_traj_len}
+      max_text_len: 10
+  
+  goal:
+    name: GoalRootVel
+    params:
+      dummy: null
+    wrapper:
+      name: NStepWrapper
+      params:
+        full_traj_len: ${trajectory.full_traj_len}
+        start_step: 0
+        num_steps: ${trajectory.input_len}
+
+networks:
+  traj_gpt_policy:
+    name: TrajGptPolicy
+    transformer:
+      num_heads: 4
+      num_layers: 2
+      mlp_ratio: 4
+      embed_dim: 128
+      decoder_block_size: ${vae_cfg.model.block_size}
+      qkv_dim: 128
+      # Additional parameters
+      grow_target_every: 8
+      encoder_block_size: ???
+      vocab_size: ${vae_cfg.model.vocab_size}
+    input_dists:
+      text: text_dist
+      goal: goal_dist
+      latent_hist: gpt_latent_dist
+      cur_latent: gpt_latent_dist
+    output_dists:
+      cur_latent: gpt_latent_dist
+
+optimizers:
+  label_opt:
+    params: [traj_gpt_policy]
+    type: adamw
+    lr_scheduler:
+      type: constant_schedule
+      value: 3e-4
+    other:
+      apply_if_finite: 100
+      grad_clip: 1.0
+      # grad_accum_steps: 4
+
+train:
+  seed: 0
+  batch_size: 128
+  num_workers: 4
+
+job:
+  checkpoint_overrides: []
+  start_checkpoint_idx: -1
+  total_nsteps: 250000
+  print_frequency_nsteps: 500
+  wandb_inexpensive_frequency_nsteps: 500
+  wandb_expensive_frequency_nsteps: 5000
+  validation_frequency_nsteps: 5000
+  checkpoint_frequency_nsteps: 50000
+
+wandb:
+  project: traj_gpt
+  # entity: ???
+  mode: online

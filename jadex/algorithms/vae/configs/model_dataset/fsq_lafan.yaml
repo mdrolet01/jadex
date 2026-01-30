@@ -1,0 +1,11 @@
+# @package _global_
+model:
+  block_size: 64
+  embed_dim: 128
+  commitment_coeff: 0.25
+  fsq_levels: [10, 10, 10]
+
+job:
+  start_checkpoint: null
+  start_checkpoint_idx: -1
+  save_preempt: false
