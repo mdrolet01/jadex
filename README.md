@@ -11,12 +11,11 @@ This branch (tag: iclr2026) contains the code for reproducing the results in [Di
 ### Features:
 
 - Train discrete VAEs with a **fully jit-compiled**, high performance, JAX pipeline.
-- Configure model/architecture hyperparmeters with **hydra**.
+- Configure model/architecture hyperparameters with **hydra**.
 - Easily integrate new models/architectures using the **registry**.
 - **Discrete flow matching** for downstream analysis of the learned latent space.
 - **Wandb** integration to visualize training results in real time.
 - Seamless integration with [LocoMujoco](https://github.com/robfiras/loco-mujoco).
-- *Coming Soon:* Implementations of popular RL/robotics methods.
 
 
 ### Models:
