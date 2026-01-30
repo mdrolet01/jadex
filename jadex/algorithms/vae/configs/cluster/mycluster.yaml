@@ -1,4 +1,4 @@
-id: ias
+id: mycluster
 name: venv
 job_name: jadex
 partition: gpu

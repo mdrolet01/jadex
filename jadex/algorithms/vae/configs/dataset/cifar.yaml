@@ -41,5 +41,5 @@ train:
   num_workers: 1
 
 test:
-  batch_size: ${train.batch_size}
+  batch_size: 50 # should be divisible by 10,000
   num_workers: ${train.num_workers}

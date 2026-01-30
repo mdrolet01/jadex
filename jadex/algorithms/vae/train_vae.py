@@ -15,8 +15,6 @@ from jadex.networks.variational.constants import X
 from jadex.utils.plotting import plot_prediction
 from omegaconf import DictConfig
 
-VAL_BATCH_SIZES = {"mnist": 50, "cifar": 50, "imagenet128": 50, "imagenet256": 50}
-
 
 class VaeVisionTrainer(SupervisedTrainerMixin, BaseTrainer):
 
@@ -122,7 +120,7 @@ class VaeVisionTrainer(SupervisedTrainerMixin, BaseTrainer):
     def run_validation(self, state: BaseState, get_placeholder: bool = False) -> Dict[str, Any]:
         assert self.test_dataset is not None, "Validation requested but no test dataset provided."
 
-        val_batch_size = VAL_BATCH_SIZES[self.cfg.dataset.id]
+        val_batch_size = int(self.cfg.test.batch_size)
         if get_placeholder:
             num_val = val_batch_size * 2
         else:

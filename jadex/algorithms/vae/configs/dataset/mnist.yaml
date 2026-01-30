@@ -26,7 +26,7 @@ dataset:
 job:
   checkpoint_overrides: []
   start_checkpoint_idx: -1
-  total_nsteps: 15000
+  total_nsteps: 250000
   print_frequency_nsteps: 5000
   wandb_inexpensive_frequency_nsteps: 5000
   wandb_expensive_frequency_nsteps: 5000
@@ -39,5 +39,5 @@ train:
   num_workers: 1
 
 test:
-  batch_size: ${train.batch_size}
+  batch_size: 50 # should be divisible by 10,000
   num_workers: ${train.num_workers}
