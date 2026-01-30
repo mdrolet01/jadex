@@ -15,6 +15,12 @@ from jadex.networks.variational.constants import X
 from jadex.utils.plotting import plot_prediction
 from omegaconf import DictConfig
 
+"""
+This is the main training script for running VAE experiments. Example usage:
+
+python train_vae.py model=daps dataset=cifar
+
+"""
 
 class VaeVisionTrainer(SupervisedTrainerMixin, BaseTrainer):
 
