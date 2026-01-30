@@ -18,5 +18,7 @@ python train_vae.py model=<MODEL_NAME> dataset=<DATASET_NAME>
 [Dataset names](configs/dataset) are:
 - mnist
 - cifar
-- imagenet256 (requires downloading ImageNet)
+- imagenet256
 - lafan (requires loco-mujoco)
+
+**NOTE**: Datasets will be automatically downloaded, but ImageNet must be downloaded manually.
