@@ -7,4 +7,4 @@
 
 ### Projects
 
-- Code for [Discrete Variational Autoencoding via Policy Search](https://arxiv.org/pdf/2509.24716) can be on the [iclr2026]( https://github.com/mdrolet01/jadex/tree/iclr2026) branch.
+- Code for [Discrete Variational Autoencoding via Policy Search](https://arxiv.org/pdf/2509.24716) can be found on the [iclr2026]( https://github.com/mdrolet01/jadex/tree/iclr2026) branch.
