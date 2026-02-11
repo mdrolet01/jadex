@@ -1,0 +1,6 @@
+# @package _global_
+model:
+  id: vqvae_df
+  name: VQVAEImageLabelDiscreteFlowModel
+  vae_checkpoint_name: ???
+  vae_checkpoint_idx: -1

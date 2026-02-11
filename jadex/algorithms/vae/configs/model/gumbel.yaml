@@ -1,0 +1,54 @@
+# @package _global_
+model:
+  id: gumbel
+  name: GumbelModel
+  block_size: ???
+  vocab_size: ???
+  num_bits: ???
+  embed_dim: ???
+
+schedulers:
+  beta: ???
+  temperature: ???
+
+dists:
+  x_dist:
+    name: ${dataset.dist_name}
+    shape: ${dataset.shape}
+    param_shape: ${dataset.param_shape}
+  latent_dist:
+    name: GumbelSoftmaxCategorical
+    shape:
+      - ${model.block_size}
+    param_shape:
+      - ${model.block_size}
+      - ${model.vocab_size}
+
+networks:
+  recognition_model:
+    nn: ${nn.cross_attn_recognition_model}
+    input_dists:
+      x: x_dist
+      latent: latent_dist
+    output_dists:
+      latent: latent_dist
+
+  generative_model:
+    nn: ${nn.generative_model}
+    input_dists:
+      latent: latent_dist
+    output_dists:
+      x: x_dist
+
+optimizers:
+  vae_opt:
+    params: [recognition_model, generative_model]
+    type: adamw
+    lr_scheduler: ???
+      # type: cosine_decay_schedule
+      # init_value: 3e-4
+      # decay_steps: ${job.total_nsteps}
+      # alpha: 0.1
+    other:
+      grad_clip: 1.0
+      apply_if_finite: 100

@@ -1,0 +1,15 @@
+# @package _global_
+model:
+  block_size: 64
+  vocab_size: 512
+  embed_dim: 128
+  old_kl:
+    target: 0.025
+    min_coeff: 1e-3
+    max_coeff: 1e3
+    scale: 1.5
+    gain: 2.0
+
+job:
+  start_checkpoint: null
+  start_checkpoint_idx: 1

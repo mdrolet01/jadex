@@ -1,0 +1,6 @@
+# @package _global_
+model:
+  id: grmck_df
+  name: GRMCKImageLabelDiscreteFlowModel
+  vae_checkpoint_name: ???
+  vae_checkpoint_idx: -1

@@ -1,0 +1,64 @@
+# For VQVAE/FSQ
+self_attn_recognition_model:
+  name: TrajTransformerRecognitionModel
+  num_image_patches: ${model.block_size} # must equal block_size for VQVAE/FSQ!
+  resample_conv1d:
+    output_length: ${model.block_size}
+    output_channels: ${model.embed_dim}
+    hidden_dim: 64
+    activation: relu
+    stride: 2
+    kernel_size: 4
+    norm: null
+  transformer:
+    num_heads: 4
+    num_layers: 6
+    mlp_ratio: 4
+    embed_dim: ${model.embed_dim}
+    decoder_block_size: ${model.block_size}
+    qkv_dim: ${model.embed_dim}
+
+cross_attn_recognition_model:
+  name: TrajTransformerRecognitionModel
+  num_image_patches: ${model.block_size}
+  resample_conv1d:
+    output_length: ${nn.self_attn_recognition_model.resample_conv1d.output_length}
+    output_channels: ${nn.self_attn_recognition_model.resample_conv1d.output_channels}
+    hidden_dim: ${nn.self_attn_recognition_model.resample_conv1d.hidden_dim}
+    activation: ${nn.self_attn_recognition_model.resample_conv1d.activation}
+    stride: ${nn.self_attn_recognition_model.resample_conv1d.stride}
+    kernel_size: ${nn.self_attn_recognition_model.resample_conv1d.kernel_size}
+    norm: ${nn.self_attn_recognition_model.resample_conv1d.norm}
+  transformer:
+    num_heads: 4
+    num_layers: 2
+    mlp_ratio: 4
+    embed_dim: ${model.embed_dim}
+    decoder_block_size: ${model.block_size}
+    qkv_dim: ${model.embed_dim}
+    
+    # Additional parameters
+    grow_target_every: 8
+    encoder_block_size: ${nn.cross_attn_recognition_model.num_image_patches}
+    vocab_size: ${model.vocab_size}
+
+generative_model:
+  name: TrajTransformerGenerativeModel
+  block_size: ${model.block_size}
+  embed_dim: ${model.embed_dim}
+  fsq_ratio: 4 # make FSQ have more params
+  resample_conv1d:
+    output_length: ${trajectory.input_len}
+    output_channels: ${model.embed_dim}
+    hidden_dim: 64
+    activation: relu
+    norm: batch_norm
+    stride: 2
+    kernel_size: 4
+  transformer:
+    num_heads: 4
+    num_layers: 2
+    mlp_ratio: 4
+    embed_dim: ${model.embed_dim}
+    decoder_block_size: ${model.block_size}
+    qkv_dim: ${model.embed_dim}

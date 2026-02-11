@@ -1,0 +1,49 @@
+# @package _global_
+model:
+  num_bits: 10240
+
+dataset:
+  id: imagenet256
+  name: ImageNetDataset
+  in_memory: true # set to false for scaling up
+  sampler: 
+    name: DefaultSampler
+
+  height: 256
+  width: 256
+  channels: 3
+  scaler_mode: data # online or data
+  scaler_type: standardize # standardize or normalize
+  num_classes: 1000
+  include_labels: False
+
+  dist_name: DiagonalGaussian
+  shape:
+    - ${dataset.height}
+    - ${dataset.width}
+    - ${dataset.channels}
+  param_shape: ${dataset.shape}
+
+job:
+  checkpoint_overrides: []
+  start_checkpoint_idx: -1
+  total_nsteps: 300000
+  print_frequency_nsteps: 500
+  wandb_inexpensive_frequency_nsteps: 500
+  wandb_expensive_frequency_nsteps: 5000
+  validation_frequency_nsteps: 5000
+  checkpoint_frequency_nsteps: 50000
+
+dists:
+  x_dist:
+    min_x_var: 0.01
+    max_x_var: 1.0
+
+train:
+  seed: 0
+  batch_size: 64
+  num_workers: 8
+
+test:
+  batch_size: 50 # should be divisible by 50,000
+  num_workers: ${train.num_workers}

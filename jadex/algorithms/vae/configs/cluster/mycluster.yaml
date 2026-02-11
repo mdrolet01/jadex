@@ -1,0 +1,10 @@
+id: mycluster
+name: venv
+job_name: jadex
+partition: gpu
+time: 4320
+cpus_per_task: 6
+mem: 32GB
+gres: gpu:1
+constraint: rtx3090
+stderr_to_stdout: true

@@ -1,0 +1,89 @@
+defaults:
+  - _self_
+  - model: ???
+  - job: null
+  - cluster: local
+  - create_sweep: null
+  - run_sweep: null
+  - optional wandb: wandb_defaults
+  - override hydra/hydra_logging: disabled
+  - override hydra/job_logging: disabled
+
+hydra:
+  output_subdir: null
+  run:
+    dir: .
+
+model:
+  dt: 0.025
+
+dists:
+  gpt_latent_dist: ??? # set manually 
+
+  label_dist:
+    name: Categorical
+    shape:
+    - 1
+    param_shape: 
+    - 1
+    - ${vae_cfg.dataset.num_classes}
+
+  time_dist:
+    name: Uniform
+    shape:
+    - 1
+    param_shape:
+    - 1
+
+networks:
+  label_recognition_model:
+    name: LabelTransformerDiscreteFlowModel
+    embed_dim: 128    
+    block_size: ${vae_cfg.model.block_size}
+    vocab_size: ${vae_cfg.model.vocab_size}
+    transformer:
+      hidden_size: ${networks.label_recognition_model.embed_dim} # equal to embed_dim
+      num_heads: 4
+      num_layers: 2
+      mlp_ratio: 4
+      class_dropout_prob: 0.1
+    input_dists:
+      latent: gpt_latent_dist
+      time: time_dist
+      label: label_dist
+    output_dists:
+      latent: gpt_latent_dist
+
+optimizers:
+  label_opt:
+    params: [label_recognition_model]
+    type: adamw
+    lr_scheduler:
+      type: constant_schedule
+      value: 1e-4
+    other:
+      apply_if_finite: 100
+      # grad_clip: 1.0
+      # grad_accum_steps: 4
+
+vae_cfg: ?? # loaded from vae checkpoint
+
+train:
+  seed: 0
+  batch_size: 64
+  num_workers: 4
+
+job:
+  start_checkpoint: null
+  total_nsteps: 250000
+  print_frequency_nsteps: 500
+  wandb_inexpensive_frequency_nsteps: 500
+  wandb_expensive_frequency_nsteps: 5000
+  validation_frequency_nsteps: 0
+  checkpoint_frequency_nsteps: 0
+  save_preempt: false
+
+wandb:
+  project: image_label_df
+  # entity: ???
+  mode: online

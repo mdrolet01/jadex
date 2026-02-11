@@ -1,0 +1,15 @@
+# @package _global_
+model:
+  embed_dim: 2
+
+schedulers:
+  beta:
+    type: auto_exp_decay
+    total_nsteps: ${job.total_nsteps}
+    init_value: 1.0
+    end_value: 0.01
+    end_pct: 1.0
+
+job:
+  start_checkpoint: null
+  start_checkpoint_idx: -1

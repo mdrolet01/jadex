@@ -1,0 +1,14 @@
+# @package _global_
+model:
+  block_size: 8
+  embed_dim: 64
+  commitment_coeff: 0.25
+  fsq_levels: [8, 6, 5]
+
+networks:
+  recognition_model:
+    nn: ${nn.vq_self_attn_recognition_model}
+
+job:
+  start_checkpoint: null
+  start_checkpoint_idx: -1

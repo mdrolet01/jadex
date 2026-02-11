@@ -1,0 +1,63 @@
+# @package _global_
+model:
+  id: daps
+  name: DAPSModel
+  block_size: ???
+  vocab_size: ???
+  num_bits: ???
+  embed_dim: ???
+  num_value_samples: ???
+  baseline: logsumexp # mean or logsumexp
+  ess_target: ???
+  init_eta: 100
+
+schedulers:
+  beta: ???
+
+dists:
+  x_dist:
+    name: ${dataset.dist_name}
+    shape: ${dataset.shape}
+    param_shape: ${dataset.param_shape}
+  latent_dist:
+    name: Categorical
+    shape:
+      - ${model.block_size}
+    param_shape:
+      - ${model.block_size}
+      - ${model.vocab_size}
+
+networks:
+  recognition_model:
+    nn: ${nn.cross_attn_recognition_model}
+    input_dists:
+      x: x_dist
+      latent: latent_dist
+    output_dists:
+      latent: latent_dist
+  
+  generative_model:
+    nn: ${nn.generative_model}
+    input_dists:
+      latent: latent_dist
+    output_dists:
+      x: x_dist
+
+optimizers:
+  vae_opt:
+    params: [recognition_model, generative_model]
+    type: adamw
+    lr_scheduler:
+      type: constant_schedule
+      value: 3e-4
+    other:
+      grad_clip: 1.0
+      apply_if_finite: 100  
+  eta_opt:
+    params: [log_eta]
+    type: adamw
+    lr_scheduler:
+      type: constant_schedule
+      value: 1e-3
+    other:
+      apply_if_finite: 100

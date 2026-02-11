@@ -1,0 +1,47 @@
+# @package _global_
+model:
+  id: fsq
+  name: FSQModel
+  commitment_coeff: ???
+  block_size: ???
+  fsq_levels: ???
+  fsq_embed_dim: ??? # set manually: len(fsq_levels)
+
+dists:
+  x_dist:
+    name: ${dataset.dist_name}
+    shape: ${dataset.shape}
+    param_shape: ${dataset.param_shape}
+  latent_dist:
+    name: DiagonalGaussianConstantVariance
+    shape:
+      - ${model.block_size}
+      - ${model.fsq_embed_dim}
+    param_shape:
+      - ${model.fsq_embed_dim}
+
+networks:
+  recognition_model:
+    nn: ${nn.self_attn_recognition_model}
+    input_dists:
+      x: x_dist
+    output_dists:
+      latent: latent_dist
+
+  generative_model:
+    nn: ${nn.generative_model}
+    input_dists:
+      latent: latent_dist
+    output_dists:
+      x: x_dist
+
+optimizers:
+  vae_opt:
+    params: [recognition_model, generative_model]
+    type: adamw
+    lr_scheduler:
+      type: constant_schedule
+      value: 3e-4
+    other:
+      grad_clip: 1.0
+      apply_if_finite: 100

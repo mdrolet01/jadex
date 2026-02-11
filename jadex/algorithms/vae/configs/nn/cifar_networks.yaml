@@ -1,0 +1,84 @@
+##### Recognition Models #####
+
+# For VQVAE/FSQ
+self_attn_recognition_model:
+  name: VisionTransformerRecognitionModel
+  num_image_patches: ${model.block_size} # must be block_size for VQVAE/FSQ!
+  
+  transformer:
+    num_heads: 4
+    num_layers: 4
+    mlp_ratio: 6
+    embed_dim: ${model.embed_dim}
+    decoder_block_size: ${model.block_size}
+    qkv_dim: ${model.embed_dim}
+
+  patch_ffwd_layers:
+    - dense:${model.embed_dim}
+
+cross_attn_recognition_model:
+  name: VisionTransformerRecognitionModel
+  num_image_patches: ${model.block_size} # must be block_size for VQVAE/FSQ!
+
+  transformer:
+    num_heads: 4
+    num_layers: 2
+    mlp_ratio: 4
+    embed_dim: ${model.embed_dim}
+    decoder_block_size: ${model.block_size}
+    qkv_dim: ${model.embed_dim}
+    
+    # Additional parameters
+    grow_target_every: 4
+    encoder_block_size: ${nn.cross_attn_recognition_model.num_image_patches}
+    vocab_size: ${model.vocab_size}
+
+  patch_ffwd_layers:
+    - dense:${model.embed_dim}
+
+# For VQVAE/FSQ
+resnet_recognition_model:
+  name: VisionResNetRecognitionModel
+  embed_dim: ${model.embed_dim}
+  block_size: ${model.block_size}
+  vocab_size: ${model.vocab_size}
+  resnet:
+    hidden_dim: 64
+    activation: relu
+    norm: batch_norm
+    residual:
+      num_blocks: 2
+      activation: relu
+      hidden_dim: 64
+      norm: batch_norm
+
+##### Generative Models #####
+generative_model:
+  name: VisionResNetGenerativeModel
+  embed_dim: ${model.embed_dim}
+  block_size: ${model.block_size}
+  fsq_ratio: 2 # make FSQ have more params
+  resnet:
+    hidden_dim: 64
+    activation: relu
+    norm: batch_norm
+    residual:
+      num_blocks: 2
+      activation: relu
+      hidden_dim: 64
+      norm: batch_norm
+
+##### Baseline Models (PPO) #####
+baseline_model:
+  name: VisionResNetBaselineModel
+  num_patches: 16
+  resnet:
+    hidden_dim: 64
+    activation: relu
+    norm: batch_norm
+    residual:
+      num_blocks: 2
+      activation: relu
+      hidden_dim: 64
+      norm: batch_norm
+    final_dim: 64

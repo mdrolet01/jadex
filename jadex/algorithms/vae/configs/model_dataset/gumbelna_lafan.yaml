@@ -1,0 +1,30 @@
+# @package _global_
+model:
+  block_size: 64
+  vocab_size: 1024
+  embed_dim: 128
+
+schedulers:
+  beta:
+    type: auto_exp_decay
+    total_nsteps: ${job.total_nsteps}
+    init_value: 3.0
+    end_value: 0.01
+    end_pct: 1.0
+  temperature:
+    type: auto_exp_decay
+    total_nsteps: ${job.total_nsteps}
+    init_value: 1.0
+    end_value: 0.75
+    end_pct: 1.0
+
+optimizers:
+  vae_opt:
+    lr_scheduler:
+      type: constant_schedule
+      value: 3e-4
+
+job:
+  start_checkpoint: null
+  start_checkpoint_idx: -1
+

@@ -1,0 +1,22 @@
+# @package _global_
+model:
+  block_size: 1024
+  vocab_size: 1024
+  embed_dim: 128
+  old_kl:
+    target: 0.025
+    min_coeff: 0.001
+    max_coeff: 1000
+    scale: 1.5
+    gain: 2.0
+
+dists:
+  x_dist:
+    # name: DiagonalGaussianConstantVariance
+    # x_var_prior: 0.05
+    min_x_var: 0.01
+    max_x_var: 1.0
+
+job:
+  start_checkpoint: null
+  start_checkpoint_idx: 1

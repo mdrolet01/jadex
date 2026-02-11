@@ -1,0 +1,78 @@
+##### Recognition Models #####
+
+# For VAE
+ffwd_recognition_model:
+  name: VisionFeedForwardRecognitionModel
+  ffwd_layers:
+    - dense:512
+    - norm:batch_norm
+    - activation:relu
+    - dropout:0.1
+
+vq_self_attn_recognition_model:
+  name: VisionTransformerRecognitionModel
+  num_image_patches: ${model.block_size}
+  
+  transformer:
+    num_heads: 4
+    num_layers: 2
+    mlp_ratio: 7
+    embed_dim: ${model.embed_dim}
+    decoder_block_size: ${model.block_size}
+    qkv_dim: ${model.embed_dim}
+
+  patch_ffwd_layers:
+    - dense:${model.embed_dim}
+
+self_attn_recognition_model:
+  name: VisionTransformerRecognitionModel
+  num_image_patches: ${model.block_size}
+  
+  transformer:
+    num_heads: 4
+    num_layers: 2
+    mlp_ratio: 6
+    embed_dim: ${model.embed_dim}
+    decoder_block_size: ${model.block_size}
+    qkv_dim: ${model.embed_dim}
+
+  patch_ffwd_layers:
+    - dense:${model.embed_dim}
+
+cross_attn_recognition_model:
+  name: VisionTransformerRecognitionModel
+  num_image_patches: ${model.block_size}
+  
+  transformer:
+    num_heads: 4
+    num_layers: 1
+    mlp_ratio: 4
+    embed_dim: ${model.embed_dim}
+    decoder_block_size: ${model.block_size}
+    qkv_dim: ${model.embed_dim}
+    
+    # Additional parameters
+    grow_target_every: 2
+    encoder_block_size: ${nn.cross_attn_recognition_model.num_image_patches}
+    vocab_size: ${model.vocab_size}
+
+  patch_ffwd_layers:
+    - dense:${model.embed_dim}
+
+##### Generative Models #####
+generative_model:
+  fsq_dim: 85 # make FSQ have more params
+  name: VisionFeedForwardGenerativeModel
+  embed_dim: ${model.embed_dim}
+  block_size: ${model.block_size}
+  ffwd_layers:
+    - dense:64
+    - activation:relu
+    - dense:256
+    - activation:relu
+
+##### Baseline Models (PPO) #####
+baseline_model:
+  name: VisionFeedForwardBaselineModel
+  num_patches: 16
+  embed_dim: 64    
